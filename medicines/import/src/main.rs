@@ -7,6 +7,7 @@ use clap::App;
 use import::{par, spc_pil};
 use std::path::Path;
 use tokio_core::reactor::Core;
+use diff::generate_diff;
 
 fn main() -> Result<(), AzureError> {
     let yaml = load_yaml!("cli.yaml");
@@ -34,6 +35,16 @@ fn main() -> Result<(), AzureError> {
             let (client, core) = initialize()?;
             let dir = Path::new(&path);
             par::import(dir, client, core, verbosity, dryrun)?
+        }
+        ("spcdiff", Some(m)) => {
+            let file1 = m
+                .value_of("file1")
+                .expect("yaml is incorrect: file1 should be a required arg");
+            let file2 = m
+                .value_of("file2")
+                .expect("yaml is incorrect: file2 should be a required arg");
+
+            generate_diff(&file1, &file2);
         }
         _ => println!("yaml is incorrect: pdf is currently the only subcommand"),
     }

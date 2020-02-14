@@ -15,3 +15,4 @@ pub mod pdf;
 mod report;
 pub mod spc_pil;
 pub mod storage;
+pub mod diff;

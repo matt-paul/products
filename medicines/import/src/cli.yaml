@@ -34,3 +34,16 @@ subcommands:
             required: true
             takes_value: true
             help: directory to import
+  - spcdiff:
+      about: generate diff files
+      args:
+        - file1:
+            short: f1
+            required: true
+            takes_value: true
+            help: older file
+        - file2:
+            short: f2
+            required: true
+            takes_value: true
+            help: newer file
