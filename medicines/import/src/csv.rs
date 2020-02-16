@@ -28,12 +28,12 @@ pub fn load_csv(dir: &Path) -> Result<HashMap<String, Record>, std::io::Error> {
     }
 }
 
-pub fn write_csv(path: &str, lines: Vec<String>) {
+pub fn write_csv(path: &str, lines: &Vec<String>) {
     let mut file = OpenOptions::new()
         .create(true)
         .write(true)
         .append(true)
-        .open(format!("./deleted_{}.csv", path))
+        .open(format!("{}.csv", path))
         .unwrap();
 
     for line in lines {
