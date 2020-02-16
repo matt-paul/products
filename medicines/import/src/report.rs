@@ -4,6 +4,11 @@ struct Uploaded {
     pl_numbers: u8,
 }
 
+struct Deleted {
+    file_name: String,
+    hash: String,
+}
+
 struct SkippedDuplicate {
     file_name: String,
     hash: String,
@@ -23,6 +28,9 @@ pub(crate) struct Report {
     skipped_duplicates: Vec<SkippedDuplicate>,
     skipped_incompletes: Vec<SkippedIncomplete>,
     skipped_unreleaseds: Vec<SkippedUnreleased>,
+    deleted_from_index: Vec<Deleted>,
+    deleted_from_container: Vec<Deleted>,
+    failed_deleted_from_index: Vec<Deleted>,
     verbosity: i8,
 }
 
@@ -33,6 +41,9 @@ impl Report {
             skipped_duplicates: Vec::new(),
             skipped_incompletes: Vec::new(),
             skipped_unreleaseds: Vec::new(),
+            deleted_from_index: Vec::new(),
+            deleted_from_container: Vec::new(),
+            failed_deleted_from_index: Vec::new(),
             verbosity,
         }
     }
@@ -97,15 +108,100 @@ impl Report {
         self.uploaded.iter().any(|uploaded| uploaded.hash == hash)
     }
 
+    pub(crate) fn add_deleted_from_index(&mut self, file_name: &str, hash: &str) {
+        self.deleted_from_index.push(Deleted {
+            file_name: file_name.to_string(),
+            hash: hash.to_string(),
+        });
+
+        if self.verbosity >= 1 {
+            println!(
+                "Deleted {} from index with sha1 hash '{}' .",
+                file_name, hash
+            );
+        }
+    }
+
+    pub(crate) fn add_deleted_from_container(&mut self, file_name: &str, hash: &str) {
+        self.deleted_from_container.push(Deleted {
+            file_name: file_name.to_string(),
+            hash: hash.to_string(),
+        });
+
+        if self.verbosity >= 1 {
+            println!(
+                "Deleted {} from container with sha1 hash '{}' .",
+                file_name, hash
+            );
+        }
+    }
+
+    pub(crate) fn add_failed_deleted_from_index(&mut self, file_name: &str, hash: &str) {
+        self.failed_deleted_from_index.push(Deleted {
+            file_name: file_name.to_string(),
+            hash: hash.to_string(),
+        });
+
+        if self.verbosity >= 1 {
+            println!(
+                "Failed to delete {} from index with sha1 hash '{}' .",
+                file_name, hash
+            );
+        }
+    }
+
     pub(crate) fn print_report(&self) {
         println!("---------------");
         println!("Number of uploaded files: {}", self.uploaded.len());
+        self.uploaded.iter().for_each(|f| {
+            println!(
+                "- File {} with hash {} was uploaded to the container.",
+                f.file_name, f.hash
+            )
+        });
+        println!("---------------");
         println!(
             "Number of skipped files: {}",
             self.skipped_unreleaseds.len()
                 + self.skipped_incompletes.len()
                 + self.skipped_duplicates.len()
         );
+
+        println!("---------------");
+        println!(
+            "Number of deleted files from index: {}",
+            self.deleted_from_index.len()
+        );
+        self.deleted_from_index.iter().for_each(|f| {
+            println!(
+                "- File {} with hash {} was deleted from the index.",
+                f.file_name, f.hash
+            )
+        });
+
+        println!("---------------");
+        println!(
+            "Number of failed deleted files from index: {}",
+            self.deleted_from_index.len()
+        );
+        self.failed_deleted_from_index.iter().for_each(|f| {
+            println!(
+                "- File {} with hash {} was deleted from the index.",
+                f.file_name, f.hash
+            )
+        });
+
+        println!("---------------");
+        println!(
+            "Number of deleted files from container: {}",
+            self.deleted_from_container.len()
+        );
+        self.deleted_from_container.iter().for_each(|f| {
+            println!(
+                "- File {} with hash {} was deleted from the container.",
+                f.file_name, f.hash
+            )
+        });
 
         println!("---------------");
         println!("Files with no product licence numbers:");

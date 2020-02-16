@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let dir = Path::new(&path);
             par::import(dir, client, core, verbosity, dryrun)?
         }
-        ("spcpil_generate_diff", Some(m)) => {
+        ("spcpilgeneratediff", Some(m)) => {
             let file1 = m
                 .value_of("file1")
                 .expect("yaml is incorrect: file1 should be a required arg");
@@ -45,7 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             spc_pil::generate_diff(&file1, &file2);
         }
-        ("spcpil_delete", Some(m)) => {
+        ("spcpildelete", Some(m)) => {
             let path = m
                 .value_of("directory")
                 .expect("yaml is incorrect: directory should be a required arg");
@@ -56,7 +56,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let (client, core) = initialize()?;
             spc_pil::delete(dir, &delete_file, client, core, verbosity, dryrun)?
         }
-        ("spcpil_upload_new", Some(m)) => {
+        ("spcpiluploadnew", Some(m)) => {
             let path = m
                 .value_of("directory")
                 .expect("yaml is incorrect: directory should be a required arg");
@@ -65,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .value_of("new_upload_file")
                 .expect("yaml is incorrect: new_upload_file should be a required arg");
             let (client, core) = initialize()?;
-            spc_pil::delete(dir, &new_upload_file, client, core, verbosity, dryrun)?
+            spc_pil::upload(dir, &new_upload_file, client, core, verbosity, dryrun)?
         }
         _ => println!("yaml is incorrect: pdf is currently the only subcommand"),
     }

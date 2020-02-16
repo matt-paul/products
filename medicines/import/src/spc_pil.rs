@@ -180,6 +180,7 @@ pub fn delete(
             storage::create_container(&client, &mut core, verbosity)?;
         }
         let started = Instant::now();
+        let mut report = Report::new(verbosity);
         let pdfs = pdf::get_pdfs(dir).expect("Could not load any PDFs.");
         let progress_bar = ProgressBar::new(pdfs.len() as u64);
         for path in pdfs {
@@ -188,16 +189,22 @@ pub fn delete(
                 .expect("file has no stem")
                 .to_str()
                 .unwrap();
-            if let Some(_delete_record) = delete_records.get(&key.to_lowercase()) {
+            if let Some(record) = delete_records.get(&key.to_lowercase()) {
                 println!("Key found: {}", &key.to_lowercase());
                 let file_data = fs::read(&path)?;
                 let hash = hash(&file_data);
+                let file_name = metadata::sanitize(&record.filename);
 
                 if !dryrun {
-                    index_manager::delete(&hash, verbosity)?;
-                    storage::delete(&hash, &client, &mut core, verbosity);
+                    let success = index_manager::delete(&hash, verbosity)?;
+                    if success {
+                        report.add_deleted_from_index(&file_name, &hash);
+                        storage::delete(&hash, &client, &mut core, verbosity)?;
+                        report.add_deleted_from_container(&file_name, &hash);
+                    } else {
+                        report.add_failed_deleted_from_index(&file_name, &hash);
+                    }
                 }
-            } else {
             }
             if verbosity == 0 {
                 progress_bar.inc(1);
@@ -208,6 +215,7 @@ pub fn delete(
             "Deleting SPCs & PILs finished in {}",
             HumanDuration(started.elapsed())
         );
+        report.print_report();
     } else {
         println!("No records loaded");
     }
@@ -216,18 +224,19 @@ pub fn delete(
 
 pub fn upload(
     dir: &Path,
-    delete_file: &str,
+    new_file: &str,
     client: Client,
     mut core: Core,
     verbosity: i8,
     dryrun: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    if let Ok(delete_records) = csv::load_csv(&format!("{}.csv", delete_file)) {
+    if let Ok(new_records) = csv::load_csv(&format!("{}.csv", new_file)) {
         if dryrun {
             println!("This is a dry run, nothing will be uploaded!");
         } else {
             storage::create_container(&client, &mut core, verbosity)?;
         }
+        let mut report = Report::new(verbosity);
         let started = Instant::now();
         let pdfs = pdf::get_pdfs(dir).expect("Could not load any PDFs.");
         let progress_bar = ProgressBar::new(pdfs.len() as u64);
@@ -237,7 +246,7 @@ pub fn upload(
                 .expect("file has no stem")
                 .to_str()
                 .unwrap();
-            if let Some(_delete_record) = delete_records.get(&key.to_lowercase()) {
+            if let Some(record) = new_records.get(&key.to_lowercase()) {
                 println!("Key found: {}", &key.to_lowercase());
                 let mut metadata: HashMap<&str, &str> = HashMap::new();
 
@@ -296,9 +305,9 @@ pub fn upload(
                 }
 
                 if !dryrun {
-                    index_manager::add(&hash, verbosity, &file_data, &metadata, verbosity)?;
                     storage::upload(&hash, &client, &mut core, &file_data, &metadata, verbosity)?;
                 }
+                report.add_uploaded(&file_name, &hash, &pl_numbers);
             } else {
             }
             if verbosity == 0 {
@@ -310,6 +319,7 @@ pub fn upload(
             "Uploading SPCs & PILs finished in {}",
             HumanDuration(started.elapsed())
         );
+        report.print_report();
     } else {
         println!("No records loaded");
     }

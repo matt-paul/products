@@ -34,7 +34,7 @@ subcommands:
             required: true
             takes_value: true
             help: directory to import
-  - spcpil_generate_diff:
+  - spcpilgeneratediff:
       about: generate diff files
       args:
         - file1:
@@ -47,7 +47,7 @@ subcommands:
             required: true
             takes_value: true
             help: newer file
-  - spcpil_delete:
+  - spcpildelete:
       about: delete only diffs
       args:
         - directory:
@@ -60,7 +60,7 @@ subcommands:
             required: true
             takes_value: true
             help: delete file
-- spcpil_upload_new:
+  - spcpiluploadnew:
       about: upload only diffs
       args:
         - directory:
