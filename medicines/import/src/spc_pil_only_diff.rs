@@ -7,6 +7,8 @@ use tokio_core::reactor::Core;
 
 pub fn import(
     dir: &Path,
+    delete_file: &str,
+    new_upload_file: &str,
     client: Client,
     mut core: Core,
     verbosity: i8,

@@ -47,3 +47,21 @@ subcommands:
             required: true
             takes_value: true
             help: newer file
+  - spcdiffonly:
+      about: upload and delete only diffs
+      args:
+        - directory:
+            short: d
+            required: true
+            takes_value: true
+            help: directory to import
+        - delete_file:
+            short: f
+            required: true
+            takes_value: true
+            help: delete file
+        - new_upload_file:
+            short: u
+            required: true
+            takes_value: true
+            help: new uploads file

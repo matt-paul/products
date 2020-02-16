@@ -46,7 +46,7 @@ pub fn generate_diff(file1_path: &str, file2_path: &str) {
         "Working out deleted files took: {}",
         HumanDuration(started.elapsed())
     );
-    csv::write_csv(&format!("deleted_{}", file1_path), &deleted_files);
+    csv::write_lines_to_csv(&format!("deleted_{}", file1_path), &deleted_files);
     progress_bar.set_position(0);
     let mut new_files: Vec<String> = vec![];
 
@@ -62,7 +62,7 @@ pub fn generate_diff(file1_path: &str, file2_path: &str) {
         "Working out new files took: {}",
         HumanDuration(started.elapsed())
     );
-    csv::write_csv(&format!("new_{}", file1_path), &new_files);
+    csv::write_lines_to_csv(&format!("new_{}", file1_path), &new_files);
 
     progress_bar.finish();
 }

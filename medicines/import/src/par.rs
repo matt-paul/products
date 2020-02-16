@@ -12,7 +12,7 @@ pub fn import(
     verbosity: i8,
     dryrun: bool,
 ) -> Result<(), AzureError> {
-    if let Ok(records) = csv::load_csv(dir) {
+    if let Ok(records) = csv::load_csv_with_autodetect(dir) {
         if dryrun {
             println!("This is a dry run, nothing will be uploaded!");
         }

@@ -4,7 +4,7 @@ extern crate clap;
 use azure_sdk_core::errors::AzureError;
 use azure_sdk_storage_core::prelude::*;
 use clap::App;
-use import::{diff, par, spc_pil};
+use import::{diff, par, spc_pil, spc_pil_only_diff};
 use std::path::Path;
 use tokio_core::reactor::Core;
 
@@ -44,6 +44,28 @@ fn main() -> Result<(), AzureError> {
                 .expect("yaml is incorrect: file2 should be a required arg");
 
             diff::generate_diff(&file1, &file2);
+        }
+        ("spcdiffonly", Some(m)) => {
+            let path = m
+                .value_of("directory")
+                .expect("yaml is incorrect: directory should be a required arg");
+            let dir = Path::new(&path);
+            let delete_file = m
+                .value_of("delete_file")
+                .expect("yaml is incorrect: delete_file should be a required arg");
+            let new_upload_file = m
+                .value_of("new_upload_file")
+                .expect("yaml is incorrect: new_upload_file should be a required arg");
+            let (client, core) = initialize()?;
+            spc_pil_only_diff::import(
+                dir,
+                &delete_file,
+                &new_upload_file,
+                client,
+                core,
+                verbosity,
+                dryrun,
+            )?
         }
         _ => println!("yaml is incorrect: pdf is currently the only subcommand"),
     }
