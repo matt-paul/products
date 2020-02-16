@@ -9,6 +9,7 @@ mod csv;
 mod date_de;
 pub mod diff;
 pub mod hash;
+pub mod index_manager;
 mod metadata;
 mod model;
 pub mod par;

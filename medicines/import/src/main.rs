@@ -8,7 +8,7 @@ use import::{diff, par, spc_pil, spc_pil_only_diff};
 use std::path::Path;
 use tokio_core::reactor::Core;
 
-fn main() -> Result<(), AzureError> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let yaml = load_yaml!("cli.yaml");
     let matches = App::from_yaml(yaml).get_matches();
     let verbosity: i8;

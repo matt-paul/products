@@ -21,6 +21,7 @@ pub fn load_csv_with_autodetect(dir: &Path) -> Result<HashMap<String, Record>, s
 }
 
 pub fn load_csv(path: &str) -> Result<HashMap<String, Record>, std::io::Error> {
+    println!("Opening csv: {}", path);
     let file = File::open(path)?;
     let mut rdr = csv::Reader::from_reader(BufReader::new(file));
     Ok(rdr
