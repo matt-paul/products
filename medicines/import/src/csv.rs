@@ -3,9 +3,10 @@ use csv;
 use std::{
     collections::HashMap,
     fs,
-    fs::{DirEntry, File},
-    io::BufReader,
+    fs::{DirEntry, File, OpenOptions},
+    io::{BufReader, Write},
     path::Path,
+    writeln,
 };
 
 pub fn load_csv(dir: &Path) -> Result<HashMap<String, Record>, std::io::Error> {
@@ -24,6 +25,21 @@ pub fn load_csv(dir: &Path) -> Result<HashMap<String, Record>, std::io::Error> {
             .collect::<HashMap<String, Record>>())
     } else {
         panic!("shouldn't get here");
+    }
+}
+
+pub fn write_csv(path: &str, lines: Vec<String>) {
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .append(true)
+        .open(format!("./deleted_{}.csv", path))
+        .unwrap();
+
+    for line in lines {
+        if let Err(e) = writeln!(file, "{}", line) {
+            eprintln!("Couldn't write to file: {}", e);
+        }
     }
 }
 
