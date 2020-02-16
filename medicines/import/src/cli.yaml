@@ -38,12 +38,12 @@ subcommands:
       about: generate diff files
       args:
         - file1:
-            short: f1
+            short: o
             required: true
             takes_value: true
             help: older file
         - file2:
-            short: f2
+            short: p
             required: true
             takes_value: true
             help: newer file

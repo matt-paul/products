@@ -4,10 +4,9 @@ extern crate clap;
 use azure_sdk_core::errors::AzureError;
 use azure_sdk_storage_core::prelude::*;
 use clap::App;
-use import::{par, spc_pil};
+use import::{diff, par, spc_pil};
 use std::path::Path;
 use tokio_core::reactor::Core;
-use diff::generate_diff;
 
 fn main() -> Result<(), AzureError> {
     let yaml = load_yaml!("cli.yaml");
@@ -44,7 +43,7 @@ fn main() -> Result<(), AzureError> {
                 .value_of("file2")
                 .expect("yaml is incorrect: file2 should be a required arg");
 
-            generate_diff(&file1, &file2);
+            diff::generate_diff(&file1, &file2);
         }
         _ => println!("yaml is incorrect: pdf is currently the only subcommand"),
     }
