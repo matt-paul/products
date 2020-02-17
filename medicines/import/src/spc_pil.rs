@@ -13,6 +13,10 @@ use std::{
 };
 use tokio_core::reactor::Core;
 
+// TODO: identify updates as well as delete and new
+// TODO: do the same delete route for pars? 
+// TODO: also insert new to the index?
+
 pub fn import(
     dir: &Path,
     client: Client,
