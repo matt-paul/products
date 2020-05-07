@@ -17,8 +17,10 @@ This site allows users to find:
 
 - [api](./api) - code for the public-facing API that exposes medicines data
 - [data-normalizer](./data-normalizer) - helper functions to clean input data for the import process
-- [import](./import) - importer to update files
+- [doc-index-updater](./doc-index-updater) - API to automate the management of documents on the site
+- [import](./import) - importer that can be run locally to update documents on the site
 - [search](./search) - code for the search service, which holds a searchable index for all public files
+- [search-client](./search-client) - client for management of the search service used by the site
 - [web](./web) - everything related to the front-end of the site
 
 ## Releasing
